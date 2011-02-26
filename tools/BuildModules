@@ -1,0 +1,25 @@
+#!/bin/bash
+
+MODT="brockhl"
+
+#(<a href="Иер 36:26">Иер 36:26</a>).
+#-e 's;<a href="\([^"]*\)[^<]*</a>;<scripRef passage="\1">\1</scripRef>;g;' |
+
+#<scripRef passage="Откр 9:11">Откр 9:11</scripRef>
+#<scripRef passage="1Цар 14:5">1Цар 14:5</scripRef> и след.; 20:25; 26:5,14-16
+
+#iconv -f WINDOWS-1251 -t UTF8 BrockhausLexicon.htm -o BrockhausLexicon-u8.htm
+cat BrockhausLexicon-u8.htm | sed -e '17,/^$/ !d; s/^\(<p>.*\)$/\1<\/p>/;' \
+    -e 's/^\(<p><b>Маадай<\/b>\)/<h4>Маадай<\/h4>\n\1/' \
+    -e 's;<h4>\([^<]*\)</h4>;\$\$\$\1;; s/^\(\$\$\$.*\)[.:]$/\1/' \
+    -e 's;<a href="\([^"]*\)[^<]*</a>;@\1@;g; s/@\(; \?\)@/\1/g; s;@\([^@]\+\)@;<scripRef passage="\1">\1</scripRef>;g;' \
+    -e 's;<i></b>;</b><i>;g;' \
+    -e 's/<i> \?-> \?<\/i>/\&\#8594;/g; s/->/\&\#8594;/g;' \
+    -e 's/^\$\$\$\(.*\) \(\&#8594;.*\)$/\$\$\$\1\n<p><b>\1<\/b> \2<\/p>/' \
+    -e 's/\([1-4]\?[А-Я][а-я]\+\) \([-:0-9,]\+<\/scripRef> и след.;\) \([-,:; 0-9]\+[;0-9]\)/\1 \2 <scripRef passage="\1 \3">\1 \3<\/scripRef>/g;' \
+    -e :b -e's_\(\&\#8594; \)\([-А-Яа-я]\+\)\( [("&]\| и \| или \|[;.,)"]\)_\1<a href="sword://BrockhausLexicon/\2">\2</a>\3_g; tb' \
+    -e :a -e 's/\(passage="[^"]*\)Нав\( .*"\)/\1Иис\2/g; ta' |
+#cat >$MODT".imp"
+imp2ld /dev/stdin $MODT z
+chmod +r $MODT*
+exit 0

@@ -1,0 +1,71 @@
+#!/bin/bash
+
+f=RadVest.xml
+d=release
+#osis2mod=/home/sw/Documents/Work/swordsvn/sword/utilities/.libs/lt-osis2mod
+osis2mod=osis2mod
+
+files="matfey mark luka ioann acts jas 1pe 2pe 1jn 2jn 3jn jud rom 1co 2co gal eph php col 1th 2th 1ti 2ti tit phm heb rev"
+
+
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<osis
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.bibletechnologies.net/2003/OSIS/namespace"
+    xmlns:osis="http://www.bibletechnologies.net/2003/OSIS/namespace"
+    xsi:schemaLocation="http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd">
+
+<osisText osisIDWork="RadVest" osisRefWork="Bible.Synodal" xml:lang="ru">
+        <header>
+                <work osisWork="RadVest">
+                        <title>Радостная Весть: Новый Завет в переводе с древнегреческого</title>
+                        <creator role="aut">В.Н.Кузнецова</creator>
+                        <rights>RBO</rights>
+                        <identifier type="OSIS">Bible.RadVest</identifier>
+                        <refSystem>Bible.Synodal</refSystem>
+                        <source>http://www.biblia.ru/translation/show/?3&start=0</source>
+                </work>
+                <work osisWork="defaultReferenceScheme">
+                        <refSystem>Bible.Synodal</refSystem>
+                </work>
+        </header>
+
+    <div type="x-testament">
+' > $f
+
+
+#<chapter osisID="Matt.1">
+#</chapter>
+
+for x in $files; do
+echo '<div type="book" osisID="Matt">
+<chapter osisID="Matt.1">' >> $f
+sed -n '3,$p' "../nt/${x}.txt" |
+sed -e 's/^\([0-9]\+\) /<verse osisID="Matt.1.\1">/g' \
+    -e 's/^\([0-9]\+\)$/<\/chapter>\n<chapter osisID="Matt.\1">/' \
+    >> $f; \
+echo '</chapter>
+</div>' >> $f; \
+done
+#    -e 's/ $//g' \
+#    -e 's/ \+/ /g' \
+#    -e '/./!d' \
+#    -e 's/<\([^\/^a-z^A-Z][^>]*\)>/<note type="study">\1<\/note>/g' \
+
+#    -e 's/\([^>]\)$/\1<\/verse>/' \
+#    -e 's/ ?/?/g; s/[^ ], ,/ "/g; s/ :/:/g; s/ ;/;/g;' \
+
+echo '</div>
+</osisText>
+</osis>' >> $f
+
+#sed -i -e 'N;/[^>]$/ s/\n</<\/verse>\n</;P;D;' $f
+sed -i -e 'N;s/\([^>]\)\n</\1<\/verse>\n</;P;D;' $f
+
+
+./aname.awk $f > $f'_rel.xml'
+mkdir -p $d
+$osis2mod $d $f'_rel.xml' -z -N -v KJV
+rm $d/ot.*
+
+exit 0
