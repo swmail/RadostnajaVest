@@ -20,7 +20,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
                 <work osisWork="RadVest">
                         <title>Радостная Весть: Новый Завет в переводе с древнегреческого</title>
                         <creator role="aut">В.Н.Кузнецова</creator>
-                        <rights>RBO</rights>
+                        <rights type="x-copyright">The Bible Society in Russia (BSR) [ru:RBO]</rights>
                         <identifier type="OSIS">Bible.RadVest</identifier>
                         <refSystem>Bible.Synodal</refSystem>
                         <source>http://www.biblia.ru/translation/show/?3&start=0</source>
